@@ -1,0 +1,121 @@
+package com.shahbozbek.stopwatch
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+@Composable
+fun MainPage(myViewModel: MyViewModel) {
+
+    val elapsedTime by rememberUpdatedState(newValue = myViewModel.elapsedTime)
+
+    val isRunning by myViewModel.running.collectAsState()
+
+    val formattedTime by remember {
+        derivedStateOf { formatTime(elapsedTime) }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+            myViewModel.startWatch()
+        }
+        override fun onPause(owner: LifecycleOwner) {
+            myViewModel.stopWatch()
+        }
+    }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+
+        Text(
+            text = formattedTime,
+            fontSize = 42.sp
+        )
+        Spacer(modifier = Modifier.height(80.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Button(onClick = { if (!isRunning) {
+                myViewModel.startWatch()
+            } else {
+                myViewModel.stopWatch()
+            } }) {
+                Text(text = if (isRunning) "Stop" else "Start")
+            }
+            Button(onClick = {
+                myViewModel.resetWatch()
+            }) {
+                Text(text = "Reset")
+            }
+        }
+    }
+}
+
+fun formatTime(time: Long): String {
+    val seconds = ((time/ 1000) % 60).toInt()
+    val minutes = ((time / (1000 * 60)) % 60).toInt()
+    val hours = (time / (1000 * 60 * 60)).toInt()
+
+    val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+    return formattedTime
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun MainPagePreview() {
+    MainPage(
+        MyViewModel(
+            MyRepository.getInstance(LocalContext.current),
+            LocalContext.current
+        )
+    )
+}
