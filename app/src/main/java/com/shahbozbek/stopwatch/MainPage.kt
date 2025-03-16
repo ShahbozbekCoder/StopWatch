@@ -1,6 +1,6 @@
 package com.shahbozbek.stopwatch
 
-import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,22 +8,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainPage(myViewModel: MyViewModel) {
@@ -50,12 +42,36 @@ fun MainPage(myViewModel: MyViewModel) {
 
     DisposableEffect(lifecycleOwner) {
         val observer = object : DefaultLifecycleObserver {
-        override fun onResume(owner: LifecycleOwner) {
-            myViewModel.startWatch()
-        }
-        override fun onPause(owner: LifecycleOwner) {
-            myViewModel.stopWatch()
-        }
+            override fun onCreate(owner: LifecycleOwner) {
+                super.onCreate(owner)
+                myViewModel.stopService()
+                Log.d("TAG", "onCreate: ")
+            }
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                 myViewModel.startWatch()
+                Log.d("TAG", "onResume: ")
+            }
+
+            override fun onStart(owner: LifecycleOwner) {
+                super.onStart(owner)
+                Log.d("TAG", "onStart: ")
+            }
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                myViewModel.stopWatch()
+                Log.d("TAG", "onPause: ")
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                super.onStop(owner)
+                myViewModel.startService(initTime = elapsedTime)
+                Log.d("TAG", "onStop: ")
+            }
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                Log.d("TAG", "onDestroy: ")
+            }
     }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
