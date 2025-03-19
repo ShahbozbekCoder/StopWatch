@@ -1,4 +1,4 @@
-package com.shahbozbek.stopwatch
+package com.shahbozbek.stopwatch.ui.stopwatch
 
 import android.content.Context
 import android.media.SoundPool
@@ -8,15 +8,21 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shahbozbek.stopwatch.repository.RepositoryImpl
+import com.shahbozbek.stopwatch.R
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MyViewModel (
-    private val myRepository: MyRepository,
-    context: Context
+@HiltViewModel
+class StopWatchViewModel @Inject constructor (
+    private val myRepositoryImpl: RepositoryImpl,
+    @ApplicationContext private val context: Context
 ): ViewModel() {
 
     var elapsedTime by mutableLongStateOf(0L)
@@ -36,7 +42,7 @@ class MyViewModel (
 
         viewModelScope.launch {
 
-            elapsedTime = myRepository.getTime()
+            elapsedTime = myRepositoryImpl.getTime()
 
             startTime = SystemClock.elapsedRealtime() - elapsedTime
             startWatch()
@@ -66,7 +72,7 @@ class MyViewModel (
 
                     elapsedTime = SystemClock.elapsedRealtime() - startTime
 
-                    myRepository.saveTime(elapsedTime)
+                    myRepositoryImpl.saveTime(elapsedTime)
 
                     delay(100)
                 }
@@ -98,7 +104,7 @@ class MyViewModel (
         running.value = false
 
         viewModelScope.launch {
-            myRepository.saveTime(0L)
+            myRepositoryImpl.saveTime(0L)
         }
     }
 
