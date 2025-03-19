@@ -8,24 +8,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.shahbozbek.stopwatch.ui.stopwatch.MainPage
+import com.shahbozbek.stopwatch.ui.stopwatch.StopWatchViewModel
 import com.shahbozbek.stopwatch.ui.theme.StopWatchTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val myRepository = MyRepository.getInstance(context = this)
-        val viewModelFactory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MyViewModel(myRepository = myRepository,
-                    context = this@MainActivity) as T
-            }
-        }
-
-        val viewModel: MyViewModel = ViewModelProvider(this, viewModelFactory)[MyViewModel::class.java]
 
         setContent {
             StopWatchTheme {
@@ -33,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainPage(viewModel)
+                    MainPage(hiltViewModel<StopWatchViewModel>())
                 }
             }
         }
