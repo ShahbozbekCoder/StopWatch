@@ -1,5 +1,6 @@
 package com.shahbozbek.stopwatch.ui.weather
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shahbozbek.stopwatch.data.models.WeatherData
@@ -21,6 +22,7 @@ class WeatherScreenViewModel @Inject constructor(
     fun getWeather() = viewModelScope.launch {
         getWeatherDataUseCase().collect { weather ->
             _weatherData.value = Result.Success(weather)
+            Log.d("WeatherScreenViewModel", "WeatherData: $weather")
         }
     }
 }

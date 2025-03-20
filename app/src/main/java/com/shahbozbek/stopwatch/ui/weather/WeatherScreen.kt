@@ -1,5 +1,7 @@
 package com.shahbozbek.stopwatch.ui.weather
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -33,11 +36,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shahbozbek.stopwatch.R
 import com.shahbozbek.stopwatch.utils.Result
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun WeatherScreen(
     weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel<WeatherScreenViewModel>()
 ) {
+
+    val context = LocalContext.current
     
     LaunchedEffect (Unit){
         weatherScreenViewModel.getWeather()
@@ -59,6 +67,8 @@ fun WeatherScreen(
         }
         is Result.Loading -> CircularProgressIndicator()
         is Result.Success -> {
+            val data = (weatherState.value as Result.Success).data
+            Log.d("WeatherScreen", "WeatherData: $data")
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -73,10 +83,22 @@ fun WeatherScreen(
                     .padding(vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
-                    onClick = { },
-                    modifier = Modifier.align(Alignment.End)
+                    onClick = {
+                        weatherScreenViewModel.getWeather()
+                        if (weatherState.value is Result.Error) {
+                            Toast.makeText(
+                                context,
+                                (weatherState.value as Result.Error).message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.End)
                         .size(48.dp)
                         .padding(end = 8.dp)
                 ) {
@@ -99,19 +121,21 @@ fun WeatherScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "20°C",
-                        color = Color.White,
-                        fontSize = 36.sp,
-                        fontFamily = FontFamily.Serif
-                    )
-                    Spacer(modifier = Modifier.width(32.dp))
-                    Text(
-                        text = "Sunny",
-                        color = Color.White,
-                        fontSize = 36.sp,
-                        fontFamily = FontFamily.Serif
-                    )
+                    data?.let {
+                        Text(
+                            text = "${(it.main.temp - 273).toInt()} ºC",
+                            color = Color.White,
+                            fontSize = 36.sp,
+                            fontFamily = FontFamily.Serif
+                        )
+                        Spacer(modifier = Modifier.width(32.dp))
+                        Text(
+                            text = it.weather.firstOrNull()?.main ?: "",
+                            color = Color.White,
+                            fontSize = 36.sp,
+                            fontFamily = FontFamily.Serif
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(32.dp))
                 Image(
@@ -121,7 +145,8 @@ fun WeatherScreen(
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -139,16 +164,19 @@ fun WeatherScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
-                    Text(
-                        text = "80%",
-                        color = Color.White,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    data?.let {
+                        Text(
+                            text = "${it.main.humidity}%",
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
                     Image(
@@ -164,16 +192,19 @@ fun WeatherScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
-                    Text(
-                        text = "12 km/h",
-                        color = Color.White,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    data?.let {
+                        Text(
+                            text = "${it.wind.speed.toInt()} km/h",
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
                     Image(
@@ -189,18 +220,91 @@ fun WeatherScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
+                    data?.let {
+                        Text(
+                            text = "${it.main.pressure} mb",
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sunrise),
+                        contentDescription = "Sunrise",
+                        modifier = Modifier.size(36.dp),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "1000 hpa",
+                        text = "Sunrise:",
                         color = Color.White,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
                     )
+                    data?.let {
+                        Text(
+                            text = formatUnixTime(it.sys.sunrise.toLong()),
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sunset),
+                        contentDescription = "Sunset",
+                        modifier = Modifier.size(36.dp),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sunset:",
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    data?.let {
+                        Text(
+                            text = formatUnixTime(it.sys.sunset.toLong()),
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp).weight(1f))
+                Text(
+                    text = "Powered by OpenWeatherMap",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily.Serif,
+                    modifier = Modifier
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
 
+}
+
+fun formatUnixTime(unixTime: Long): String {
+    val date = Date(unixTime * 1000)
+    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return format.format(date)
 }
 
 @Preview(showSystemUi = true, showBackground = true)
