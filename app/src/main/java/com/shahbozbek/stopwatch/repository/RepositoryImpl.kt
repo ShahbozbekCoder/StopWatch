@@ -1,6 +1,7 @@
 package com.shahbozbek.stopwatch.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -47,12 +48,20 @@ class RepositoryImpl @Inject constructor(
 
             val body = response.body()
 
+            Log.d("RepositoryImpl", "WeatherData: ${body?.weather}")
+
             emit(body)
         } else {
+
+            Log.d("RepositoryImpl", "WeatherData: ${response.errorBody()?.string()}")
+
             emit(null)
         }
 
     }.catch {
+
+        Log.d("RepositoryImpl", "WeatherData: ${it.message}")
+
         flow {
             emit(null)
         }

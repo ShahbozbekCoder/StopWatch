@@ -15,6 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.shahbozbek.stopwatch.ui.stopwatch.MainPage
 import com.shahbozbek.stopwatch.ui.stopwatch.StopWatchViewModel
 import com.shahbozbek.stopwatch.ui.theme.StopWatchTheme
+import com.shahbozbek.stopwatch.ui.weather.WeatherScreen
+import com.shahbozbek.stopwatch.ui.weather.WeatherScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainPage(hiltViewModel<StopWatchViewModel>())
+                    WeatherScreen(hiltViewModel<WeatherScreenViewModel>())
                 }
             }
         }
