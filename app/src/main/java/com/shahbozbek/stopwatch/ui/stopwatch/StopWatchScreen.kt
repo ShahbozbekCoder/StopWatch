@@ -2,11 +2,13 @@ package com.shahbozbek.stopwatch.ui.stopwatch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +29,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
 @Composable
-fun MainPage(myViewModel: StopWatchViewModel = hiltViewModel()) {
+fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingValues: PaddingValues) {
 
     val elapsedTime by rememberUpdatedState(newValue = myViewModel.elapsedTime)
 
@@ -55,7 +57,8 @@ fun MainPage(myViewModel: StopWatchViewModel = hiltViewModel()) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -103,7 +106,8 @@ fun formatTime(time: Long): String {
 )
 @Composable
 fun MainPagePreview() {
-    MainPage(
-        hiltViewModel()
+    StopWatchScreen(
+        hiltViewModel(),
+        PaddingValues()
     )
 }

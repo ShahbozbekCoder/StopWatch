@@ -1,6 +1,6 @@
 package com.shahbozbek.stopwatch.data.remote
 
-import com.shahbozbek.stopwatch.data.models.WeatherData
+import com.shahbozbek.stopwatch.data.models.weatherdata.WeatherData
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

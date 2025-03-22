@@ -1,6 +1,6 @@
 package com.shahbozbek.stopwatch.repository
 
-import com.shahbozbek.stopwatch.data.models.WeatherData
+import com.shahbozbek.stopwatch.data.models.weatherdata.WeatherData
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
