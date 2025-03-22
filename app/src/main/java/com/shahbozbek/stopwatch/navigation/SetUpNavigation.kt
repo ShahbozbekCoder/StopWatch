@@ -60,9 +60,10 @@ fun SetUpNavigation() {
                 Column {
                     Box(
                         modifier = Modifier
-                            .height(100.dp)
+                            .height(150.dp)
                             .fillMaxWidth(0.8f)
-                            .background(color = Purple40)
+                            .background(color = Purple40),
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -73,7 +74,7 @@ fun SetUpNavigation() {
                                 painter = painterResource(id = R.drawable.ic_app_icon), // Replace with your app icon resource
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(60.dp)
+                                    .size(70.dp)
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.secondary)
                                     .padding(8.dp)
@@ -85,7 +86,8 @@ fun SetUpNavigation() {
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Normal,
                                     color = Color.White
-                                )
+                                ),
+                                fontSize = 26.sp
                             )
                         }
                     }
@@ -99,10 +101,10 @@ fun SetUpNavigation() {
                                 scope.launch {
                                     drawerState.close()
                                     navController.navigate(navigationItem.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            inclusive = true
-                                        }
-                                        launchSingleTop = true
+//                                        popUpTo(navController.graph.startDestinationId) {
+//                                            inclusive = true
+//                                        }
+//                                        launchSingleTop = true
                                     }
                                 }
                             },
@@ -112,12 +114,13 @@ fun SetUpNavigation() {
                                         painterResource(id = navigationItem.selectedIcon)
                                     } else {
                                         painterResource(navigationItem.unselectedIcon)
-                                    }, contentDescription = navigationItem.title
+                                    }, contentDescription = navigationItem.title,
+                                    modifier = Modifier.size(45.dp)
                                 )
                             },
                             modifier = Modifier
                                 .padding(NavigationDrawerItemDefaults.ItemPadding)
-                                .fillMaxWidth(0.7f)
+                                .fillMaxWidth(0.78f)
                         )
                     }
                 }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -106,8 +108,10 @@ fun MainWeatherScreen(
                         backgrounds[4]
                     }
                 }
+            ).verticalScroll(
+                state = rememberScrollState()
             )
-            .padding(vertical = 32.dp),
+        ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -160,7 +164,7 @@ fun MainWeatherScreen(
             fontSize = 48.sp,
             fontFamily = FontFamily.Serif
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -182,7 +186,7 @@ fun MainWeatherScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         when (conditions) {
             "Haze", "Clouds", "Foggy", "Partly Clouds", "Overcast", "Mist" -> {
                 Image(
@@ -221,7 +225,7 @@ fun MainWeatherScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
