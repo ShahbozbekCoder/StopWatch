@@ -1,0 +1,30 @@
+package com.shahbozbek.stopwatch.navigation
+
+import com.shahbozbek.stopwatch.R
+
+enum class Screens(val route: String) {
+    StopWatchScreen("stopwatch_screen"),
+    WeatherScreen("weather_screen")
+}
+
+data class NavItems(
+    val title: String,
+    val selectedIcon: Int,
+    val unselectedIcon: Int,
+    val route: String
+)
+
+val listOfNavItems = listOf<NavItems>(
+    NavItems(
+        title = "Stopwatch",
+        selectedIcon = R.drawable.selected_stopwatch,
+        unselectedIcon = R.drawable.unselected_stopwatch,
+        route = Screens.StopWatchScreen.route
+    ),
+    NavItems(
+        title = "Weather",
+        selectedIcon = R.drawable.selected_weather,
+        unselectedIcon = R.drawable.unselected_weather,
+        route = Screens.WeatherScreen.route
+    )
+)

@@ -9,11 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.shahbozbek.stopwatch.ui.stopwatch.MainPage
-import com.shahbozbek.stopwatch.ui.stopwatch.StopWatchViewModel
+import com.shahbozbek.stopwatch.navigation.SetUpNavigation
 import com.shahbozbek.stopwatch.ui.theme.StopWatchTheme
 import com.shahbozbek.stopwatch.ui.weather.WeatherScreen
 import com.shahbozbek.stopwatch.ui.weather.WeatherScreenViewModel
@@ -31,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    WeatherScreen(hiltViewModel<WeatherScreenViewModel>())
+                    SetUpNavigation()
                 }
             }
         }

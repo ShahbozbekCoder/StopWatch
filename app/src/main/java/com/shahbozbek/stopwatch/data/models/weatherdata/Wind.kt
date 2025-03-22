@@ -1,4 +1,4 @@
-package com.shahbozbek.stopwatch.data.models
+package com.shahbozbek.stopwatch.data.models.weatherdata
 
 data class Wind(
     val deg: Int,

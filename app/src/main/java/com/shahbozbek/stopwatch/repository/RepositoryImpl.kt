@@ -1,13 +1,12 @@
 package com.shahbozbek.stopwatch.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.shahbozbek.stopwatch.data.models.WeatherData
+import com.shahbozbek.stopwatch.data.models.weatherdata.WeatherData
 import com.shahbozbek.stopwatch.data.remote.WeatherApiInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -48,23 +47,14 @@ class RepositoryImpl @Inject constructor(
 
             val body = response.body()
 
-            Log.d("RepositoryImpl", "WeatherData: ${body?.weather}")
-
             emit(body)
+
         } else {
-
-            Log.d("RepositoryImpl", "WeatherData: ${response.errorBody()?.string()}")
-
-            emit(null)
+            throw Exception(response.message())
         }
 
     }.catch {
-
-        Log.d("RepositoryImpl", "WeatherData: ${it.message}")
-
-        flow {
-            emit(null)
-        }
+        throw Exception(it.message)
     }.flowOn(Dispatchers.IO)
 
 }
