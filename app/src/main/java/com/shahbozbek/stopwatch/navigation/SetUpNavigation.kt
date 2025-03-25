@@ -100,11 +100,10 @@ fun SetUpNavigation() {
                                 selectedItemIndex.intValue = index
                                 scope.launch {
                                     drawerState.close()
-                                    navController.navigate(navigationItem.route) {
-//                                        popUpTo(navController.graph.startDestinationId) {
-//                                            inclusive = true
-//                                        }
-//                                        launchSingleTop = true
+                                }
+                                navController.navigate(navigationItem.route) {
+                                    popUpTo(navController.graph.id) {
+                                        inclusive = true
                                     }
                                 }
                             },
