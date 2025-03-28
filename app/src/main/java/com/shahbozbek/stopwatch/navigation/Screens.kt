@@ -4,7 +4,8 @@ import com.shahbozbek.stopwatch.R
 
 enum class Screens(val route: String) {
     StopWatchScreen("stopwatch_screen"),
-    WeatherScreen("weather_screen")
+    WeatherScreen("weather_screen"),
+    NewsScreen("news_screen")
 }
 
 data class NavItems(
@@ -14,7 +15,7 @@ data class NavItems(
     val route: String
 )
 
-val listOfNavItems = listOf<NavItems>(
+val listOfNavItems = listOf(
     NavItems(
         title = "Stopwatch",
         selectedIcon = R.drawable.selected_stopwatch,
@@ -26,5 +27,11 @@ val listOfNavItems = listOf<NavItems>(
         selectedIcon = R.drawable.selected_weather,
         unselectedIcon = R.drawable.unselected_weather,
         route = Screens.WeatherScreen.route
+    ),
+    NavItems(
+        title = "News",
+        selectedIcon = R.drawable.selected_news,
+        unselectedIcon = R.drawable.unselected_news,
+        route = Screens.NewsScreen.route
     )
 )

@@ -1,5 +1,6 @@
 package com.shahbozbek.stopwatch.repository
 
+import com.shahbozbek.stopwatch.data.models.newsdata.NewsData
 import com.shahbozbek.stopwatch.data.models.weatherdata.WeatherData
 import kotlinx.coroutines.flow.Flow
 
@@ -10,5 +11,7 @@ interface Repository {
     suspend fun saveTime(time: Long)
 
     fun getWeather(): Flow<WeatherData?>
+
+    fun getNews(category: String = ""): Flow<NewsData?>
 
 }

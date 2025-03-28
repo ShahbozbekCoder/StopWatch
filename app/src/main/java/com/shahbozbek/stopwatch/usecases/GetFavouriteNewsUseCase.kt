@@ -1,0 +1,11 @@
+package com.shahbozbek.stopwatch.usecases
+
+import com.shahbozbek.stopwatch.data.database.ArticleDao
+import com.shahbozbek.stopwatch.repository.Repository
+import javax.inject.Inject
+
+class GetFavouriteNewsUseCase @Inject constructor(
+    private val articleDao: ArticleDao
+) {
+    operator fun invoke() = articleDao.getFavouriteArticles()
+}
