@@ -1,16 +1,30 @@
 package com.shahbozbek.stopwatch.data.remote
 
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitBuilder {
-    private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+    const val BASE_URL_FROM_WEATHER = "https://api.openweathermap.org/data/2.5/"
+    const val BASE_URL_FROM_NEWS = "https://newsapi.org/v2/"
 
-    fun apiInterFaceBuilder():WeatherApiInterface {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+    inline fun <reified T> apiInterFaceBuilder(
+        baseUrl: String
+    ): T {
+
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
             .build()
-        return retrofit.create(WeatherApiInterface::class.java)
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        return retrofit.create(T::class.java)
     }
 }

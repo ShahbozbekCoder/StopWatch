@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -43,6 +44,14 @@ android {
 
 dependencies {
 
+
+    implementation(libs.logging.interceptor)
+    implementation (libs.compose)
+    implementation (libs.glide)
+    ksp(libs.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

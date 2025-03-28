@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shahbozbek.stopwatch.data.models.datastate.WeatherUIState
 import com.shahbozbek.stopwatch.usecases.GetWeatherDataUseCase
-import com.shahbozbek.stopwatch.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow

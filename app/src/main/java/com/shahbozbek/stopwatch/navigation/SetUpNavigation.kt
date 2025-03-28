@@ -71,7 +71,7 @@ fun SetUpNavigation() {
                         ) {
                             // Rounded app icon
                             Image(
-                                painter = painterResource(id = R.drawable.ic_app_icon), // Replace with your app icon resource
+                                painter = painterResource(id = R.drawable.ic_app_icon),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(70.dp)
@@ -114,7 +114,7 @@ fun SetUpNavigation() {
                                     } else {
                                         painterResource(navigationItem.unselectedIcon)
                                     }, contentDescription = navigationItem.title,
-                                    modifier = Modifier.size(45.dp)
+                                    modifier = Modifier.size(40.dp)
                                 )
                             },
                             modifier = Modifier
@@ -132,7 +132,7 @@ fun SetUpNavigation() {
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Super App",
+                            text = listOfNavItems[selectedItemIndex.intValue].title,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Normal
                             ),

@@ -76,7 +76,7 @@ fun MainWeatherScreen(
                 Color(0xFF8FCEEE),
                 Color(0xFFC6D2D3)
             )
-        ),
+        )
     )
 
     val state = weatherScreenViewModel.state.collectAsState()

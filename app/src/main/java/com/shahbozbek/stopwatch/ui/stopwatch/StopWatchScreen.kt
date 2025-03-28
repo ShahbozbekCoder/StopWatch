@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +38,7 @@ fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingVa
         derivedStateOf { formatTime(elapsedTime) }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner) {
         val observer = object : DefaultLifecycleObserver {
