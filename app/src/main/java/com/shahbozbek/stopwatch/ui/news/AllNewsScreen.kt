@@ -3,7 +3,6 @@ package com.shahbozbek.stopwatch.ui.news
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -12,9 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +34,7 @@ import androidx.navigation.NavController
 import com.shahbozbek.stopwatch.utils.Result
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllNewsScreen(
     newsScreenViewModel: NewsScreenViewModel = hiltViewModel(),
@@ -41,19 +44,23 @@ fun AllNewsScreen(
         newsScreenViewModel.getNews()
     }
     val newsState = newsScreenViewModel.newsData.collectAsState()
-    val listOfCategory = listOf(
-        "General",
-        "Business",
-        "Entertainment",
-        "Health",
-        "Science",
-        "Sports",
-        "Technology"
-    )
+    val listOfCategory = remember {
+        listOf(
+            "General",
+            "Business",
+            "Entertainment",
+            "Health",
+            "Science",
+            "Sports",
+            "Technology"
+        )
+    }
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
     val scope = rememberCoroutineScope()
+    val refreshState = rememberPullToRefreshState()
+    val isRefreshing = newsState.value is Result.Loading
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -91,27 +98,33 @@ fun AllNewsScreen(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            when (newsState.value) {
-                is Result.Error -> {
-                    Text(text = newsState.value.toString())
-                }
-
-                is Result.Loading -> CircularProgressIndicator()
-                is Result.Success -> {
-                    val data = (newsState.value as Result.Success).data?.articles
-                    LazyColumn {
-                        items(data?.size ?: 0) { idx ->
-                            NewsItem(
-                                newsItem = data!![idx],
-                                onClick = {
-                                    val encodedUrl = Uri.encode(data[idx].url)
-                                    navController.navigate("news_detail/$encodedUrl")
-                                    newsScreenViewModel.setFavourite(data[idx])
-                                }
-                            )
+            PullToRefreshBox(
+                state = refreshState,
+                onRefresh = {
+                    newsScreenViewModel.getNews(listOfCategory[selectedIndex])
+                },
+                isRefreshing = isRefreshing,
+                modifier = Modifier.weight(1f)
+            ) {
+                when (newsState.value) {
+                    is Result.Error -> {
+                        Text(text = newsState.value.toString())
+                    }
+                    is Result.Loading -> {}
+                    is Result.Success -> {
+                        val data = (newsState.value as Result.Success).data?.articles
+                        LazyColumn {
+                            items(data?.size ?: 0) { idx ->
+                                NewsItem(
+                                    newsItem = data!![idx],
+                                    onClick = {
+                                        val encodedUrl = Uri.encode(data[idx].url)
+                                        navController.navigate("news_detail/$encodedUrl")
+                                        newsScreenViewModel.setFavourite(data[idx])
+                                    }
+                                )
+                            }
                         }
                     }
                 }
