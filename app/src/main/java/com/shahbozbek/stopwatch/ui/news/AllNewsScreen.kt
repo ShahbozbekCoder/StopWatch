@@ -1,6 +1,7 @@
 package com.shahbozbek.stopwatch.ui.news
 
 import android.net.Uri
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -92,8 +93,8 @@ fun AllNewsScreen(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         shape = RoundedCornerShape(50),
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color.Cyan,
-                            disabledContainerColor = Color.LightGray,
+                            selectedContainerColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.Cyan,
+                            disabledContainerColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray,
                         )
                     )
                 }

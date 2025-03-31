@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shahbozbek.stopwatch.data.models.newsdata.Article
 import com.shahbozbek.stopwatch.repository.RepositoryImpl
+import com.shahbozbek.stopwatch.ui.theme.ThemePreferences
 import com.shahbozbek.stopwatch.usecases.GetFavouriteNewsUseCase
 import com.shahbozbek.stopwatch.usecases.GetNewsDataUseCase
 import com.shahbozbek.stopwatch.utils.Result
@@ -11,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class NewsScreenViewModel @Inject constructor(
     private val getNewsDataUseCase: GetNewsDataUseCase,
     private val repositoryImpl: RepositoryImpl,
-    private val getFavouriteNewsUseCase: GetFavouriteNewsUseCase
+    private val getFavouriteNewsUseCase: GetFavouriteNewsUseCase,
+    private val themePreferences: ThemePreferences
 ) : ViewModel() {
 
     private val _newsData = MutableStateFlow<Result>(Result.Loading)
@@ -27,6 +30,9 @@ class NewsScreenViewModel @Inject constructor(
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _newsData.value = Result.Error(throwable.message ?: "Unknown error")
     }
+
+    private val _isDarkThemeEnabled = MutableStateFlow(themePreferences.isDarkThemeEnabled())
+    val isDarkThemeEnabled: StateFlow<Boolean> get() = _isDarkThemeEnabled.asStateFlow()
 
     fun getNews(category: String = "") {
         viewModelScope.launch(coroutineExceptionHandler) {

@@ -1,6 +1,7 @@
 package com.shahbozbek.stopwatch.ui.news
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,7 +55,7 @@ fun NewsItem(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(if (isSystemInDarkTheme()) Color.DarkGray else Color.White)
                     .padding(12.dp)
             ) {
                 Row(
@@ -79,7 +80,8 @@ fun NewsItem(
                                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 overflow = TextOverflow.Ellipsis,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                color = if (isSystemInDarkTheme()) Color.White else Color.Black
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
@@ -89,9 +91,8 @@ fun NewsItem(
                                 maxLines = 2,
                                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                                 fontSize = 14.sp,
-                                color = Color.Black,
-                                overflow = TextOverflow.Ellipsis
-
+                                overflow = TextOverflow.Ellipsis,
+                                color = if (isSystemInDarkTheme()) Color.White else Color.Black
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))

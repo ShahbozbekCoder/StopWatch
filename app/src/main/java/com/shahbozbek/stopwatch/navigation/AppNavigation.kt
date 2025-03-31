@@ -37,7 +37,6 @@ fun AppNavigation(navHostController: NavHostController, paddingValues: PaddingVa
                     }
                 }
             }
-
         }
     }
 }

@@ -8,6 +8,7 @@ import com.shahbozbek.stopwatch.data.remote.NewsApiInterface
 import com.shahbozbek.stopwatch.data.remote.RetrofitBuilder
 import com.shahbozbek.stopwatch.repository.Repository
 import com.shahbozbek.stopwatch.repository.RepositoryImpl
+import com.shahbozbek.stopwatch.ui.theme.ThemePreferences
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -43,6 +44,11 @@ object AppModule {
         return RetrofitBuilder.apiInterFaceBuilder<NewsApiInterface>(
             baseUrl = RetrofitBuilder.BASE_URL_FROM_NEWS
         )
+    }
+
+    @[Provides Reusable]
+    fun provideThemePreferences(@ApplicationContext context: Context): ThemePreferences {
+        return ThemePreferences(context)
     }
 
     @[Provides Reusable]
