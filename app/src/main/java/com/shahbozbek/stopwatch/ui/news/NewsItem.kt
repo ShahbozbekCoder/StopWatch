@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -82,7 +83,7 @@ fun NewsItem(
                             Text(
                                 text = it,
                                 maxLines = 2,
-                                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 overflow = TextOverflow.Ellipsis,
                                 fontSize = 16.sp,
@@ -94,7 +95,7 @@ fun NewsItem(
                             Text(
                                 text = it,
                                 maxLines = 2,
-                                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontSize = 14.sp,
                                 overflow = TextOverflow.Ellipsis,
                                 color = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -116,9 +117,9 @@ fun NewsItem(
                     Text(
                         text = it,
                         maxLines = 1,
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                         fontSize = 16.sp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }

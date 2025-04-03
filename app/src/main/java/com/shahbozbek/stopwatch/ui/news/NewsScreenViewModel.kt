@@ -47,9 +47,13 @@ class NewsScreenViewModel @Inject constructor(
     private val _newsData = MutableStateFlow<Result>(Result.Loading)
     val newsData: StateFlow<Result> get() = _newsData.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> get() = _isLoading.asStateFlow()
+
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.d("VVVVV", "getNewsData: error")
         _newsData.value = Result.Error(throwable.message ?: "Unknown error")
+        _isLoading.value = false
     }
 
     private val _isDarkThemeEnabled = MutableStateFlow(themePreferences.isDarkThemeEnabled())
@@ -66,9 +70,9 @@ class NewsScreenViewModel @Inject constructor(
 //        }
 //    }
 
-    init {
-        getNewsData()
-    }
+//    init {
+//        getNewsData()
+//    }
 
     fun insertFavouriteArticle(article: Article) {
         viewModelScope.launch {
@@ -87,6 +91,9 @@ class NewsScreenViewModel @Inject constructor(
     fun getNewsData(category: String = "General") {
 
         viewModelScope.launch(coroutineExceptionHandler) {
+
+            _newsData.value = Result.Loading
+
             selectedCategory.value = category
 
             getNewsDataUseCase.invoke(category).collectLatest { news ->
