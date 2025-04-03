@@ -28,14 +28,19 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.shahbozbek.stopwatch.data.models.newsdata.Article
+import com.shahbozbek.stopwatch.data.models.newsdata.FavouriteArticle
 import com.shahbozbek.stopwatch.data.models.newsdata.Source
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun NewsItem(
     onClick: () -> Unit = {},
-    newsItem: Article
+    newsItem: Article? = null,
+    favouriteArticle: FavouriteArticle? = null
 ) {
     val onItemClicked = remember {
         mutableIntStateOf(0)
@@ -62,7 +67,7 @@ fun NewsItem(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     GlideImage(
-                        model = newsItem.urlToImage,
+                        model = (newsItem?.urlToImage ?: favouriteArticle?.urlToImage),
                         contentDescription = null,
                         modifier = Modifier
                             .height(100.dp)
@@ -73,7 +78,7 @@ fun NewsItem(
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        newsItem.title?.let {
+                        (newsItem?.title ?: favouriteArticle?.title)?.let {
                             Text(
                                 text = it,
                                 maxLines = 2,
@@ -85,7 +90,7 @@ fun NewsItem(
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
-                        newsItem.description?.let {
+                        (newsItem?.description ?: favouriteArticle?.description)?.let {
                             Text(
                                 text = it,
                                 maxLines = 2,
@@ -96,9 +101,9 @@ fun NewsItem(
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        newsItem.publishedAt?.let {
+                        (newsItem?.publishedAt ?: favouriteArticle?.publishedAt)?.let {
                             Text(
-                                text = it.substring(0, 10),
+                                text = formatPublishedDateLegacy(it),
                                 maxLines = 1,
                                 fontSize = 14.sp,
                                 modifier = Modifier.align(Alignment.End)
@@ -107,7 +112,7 @@ fun NewsItem(
 
                     }
                 }
-                newsItem.source?.name?.let {
+                (newsItem?.source?.name ?: favouriteArticle?.source?.name)?.let {
                     Text(
                         text = it,
                         maxLines = 1,
@@ -118,6 +123,20 @@ fun NewsItem(
                 }
             }
         }
+    }
+}
+
+private fun formatPublishedDateLegacy(dateString: String?): String {
+    if (dateString.isNullOrBlank()) return ""
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+        val date = inputFormat.parse(dateString) ?: return ""
+
+        val outputFormat = SimpleDateFormat("d MMMM yyyy, HH:mm", Locale("eng"))
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        ""
     }
 }
 

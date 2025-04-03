@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = "news_table",
+    tableName = "article_table",
     indices = [Index(value = ["url"], unique = true)]
 )
 data class Article(
@@ -22,5 +22,4 @@ data class Article(
     val title: String? = null,
     val url: String? = null,
     val urlToImage: String? = null,
-    var isFavourite: Boolean = false
 ): Parcelable

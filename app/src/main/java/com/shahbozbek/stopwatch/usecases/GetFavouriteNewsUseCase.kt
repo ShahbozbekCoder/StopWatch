@@ -5,7 +5,7 @@ import com.shahbozbek.stopwatch.repository.Repository
 import javax.inject.Inject
 
 class GetFavouriteNewsUseCase @Inject constructor(
-    private val articleDao: ArticleDao
+    private val repository: Repository
 ) {
-    operator fun invoke() = articleDao.getFavouriteArticles()
+    operator fun invoke() = repository.getFavouriteArticles()
 }

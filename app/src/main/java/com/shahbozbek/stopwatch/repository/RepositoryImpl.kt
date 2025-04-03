@@ -9,9 +9,12 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.shahbozbek.stopwatch.data.database.ArticleDao
 import com.shahbozbek.stopwatch.data.database.ArticleDatabase
+import com.shahbozbek.stopwatch.data.database.FavouritesDao
 import com.shahbozbek.stopwatch.data.models.newsdata.Article
+import com.shahbozbek.stopwatch.data.models.newsdata.FavouriteArticle
 import com.shahbozbek.stopwatch.data.models.newsdata.NewsData
 import com.shahbozbek.stopwatch.data.models.weatherdata.WeatherData
+import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.data.remote.NewsApiInterface
 import com.shahbozbek.stopwatch.data.remote.WeatherApiInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,8 +32,10 @@ class RepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val weatherApiInterface: WeatherApiInterface,
     private val newsApiInterface: NewsApiInterface,
-    private val articleDatabase: ArticleDatabase,
-) : Repository, ArticleDao {
+    private val networkUtils: NetworkUtils,
+    private val articleDao: ArticleDao,
+    private val favouritesDao: FavouritesDao
+) : Repository {
 
     companion object {
         val TIME = longPreferencesKey("time")
@@ -89,15 +94,46 @@ class RepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override suspend fun insertFavouriteArticle(article: Article) {
-        articleDatabase.articleDao.insertFavouriteArticle(article)
+        favouritesDao
+            .insertFavouriteArticle(FavouriteArticle.fromArticle(article))
     }
 
-    override fun getFavouriteArticles(): Flow<List<Article>> {
-        return articleDatabase.articleDao.getFavouriteArticles()
+    override fun getFavouriteArticles(): Flow<List<FavouriteArticle>> = flow {
+        emit(favouritesDao.getFavouriteArticles())
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun deleteFavouriteArticles(article: FavouriteArticle) {
+        favouritesDao.deleteFavouriteArticles(article)
     }
 
-    override suspend fun deleteFavouriteArticles(article: Article) {
-        articleDatabase.articleDao.deleteFavouriteArticles(article)
+    override suspend fun insertNewsData(newsData: List<Article>) {
+        articleDao.insertNewsData(newsData)
+    }
+
+    override suspend fun getNewsData(category: String): Flow<List<Article>> = flow {
+        if (networkUtils.isNetworkAvailable()) {
+
+            val response = newsApiInterface.getNews(category = category)
+
+            if (response.isSuccessful) {
+                val articles = response.body()!!.articles
+
+                articleDao.deleteAllNewsData()
+                articleDao.insertNewsData(articles)
+
+                emit(articles)
+            } else {
+                emit(articleDao.getNewsData())
+            }
+        } else {
+            emit(articleDao.getNewsData())
+        }
+    }.catch {
+        emit(articleDao.getNewsData())
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun deleteAllNewsData() {
+        articleDao.deleteAllNewsData()
     }
 
 }
