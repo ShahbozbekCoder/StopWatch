@@ -23,8 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +32,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.shahbozbek.stopwatch.utils.Result
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,21 +40,15 @@ fun AllNewsScreen(
     navController: NavController,
 ) {
 
-    val newsState = newsScreenViewModel.newsData.collectAsState()
-    val listOfCategory by newsScreenViewModel.listOfCategory.collectAsState()
-    val selectedCategory by newsScreenViewModel.selectedCategory.collectAsState("General")
-    val scope = rememberCoroutineScope()
-    val refreshState = rememberPullToRefreshState()
-    val isRefreshing = remember {
-        mutableStateOf(newsState.value is Result.Loading)
+    LaunchedEffect(null) {
+        newsScreenViewModel.getNewsData()
     }
 
-    LaunchedEffect(newsState.value) {
-        Log.d("VVVVV", "getNewsData: Launched effect")
-        if (newsState.value is Result.Success) {
-            isRefreshing.value = newsState.value is Result.Loading
-        }
-    }
+    val newsState by newsScreenViewModel.newsData.collectAsState()
+    val listOfCategory by newsScreenViewModel.listOfCategory.collectAsState()
+    val selectedCategory by newsScreenViewModel.selectedCategory.collectAsState("General")
+    val refreshState = rememberPullToRefreshState()
+    val isRefreshing = newsState is Result.Loading
 
     Box(
         modifier = Modifier
@@ -78,9 +67,8 @@ fun AllNewsScreen(
                     FilterChip(
                         selected = selectedCategory == item,
                         onClick = {
-                            scope.launch {
                                 newsScreenViewModel.getNewsData(item)
-                            }
+                                Log.d("AllScreen", "isRefreshing: $isRefreshing")
                         },
                         label = {
                             Text(
@@ -103,29 +91,32 @@ fun AllNewsScreen(
                 onRefresh = {
                     newsScreenViewModel.getNewsData(selectedCategory)
                 },
-                isRefreshing = newsState.value is Result.Loading,
+                isRefreshing = isRefreshing,
                 modifier = Modifier.weight(1f)
             ) {
-                when (newsState.value) {
+                when (newsState) {
                     is Result.Error -> {
-                        Text(text = newsState.value.toString())
+                        Text(text = newsState.toString())
                     }
 
-                    is Result.Loading -> {}
+                    is Result.Loading -> {
+                        Log.d("AllScreen", "isRefreshing: $isRefreshing")
+                    }
+
                     is Result.Success -> {
 
+                        val data = (newsState as Result.Success).data.articles
+
                         LazyColumn {
-                            (newsState.value as? Result.Success)?.let {
-                                items(it.data.articles) { item ->
-                                    NewsItem(
-                                        newsItem = item,
-                                        onClick = {
-                                            val encodedUrl = Uri.encode(item.url)
-                                            navController.navigate("news_detail/$encodedUrl")
-                                            newsScreenViewModel.setFavourite(item)
-                                        }
-                                    )
-                                }
+                            items(data) { item ->
+                                NewsItem(
+                                    newsItem = item,
+                                    onClick = {
+                                        val encodedUrl = Uri.encode(item.url)
+                                        navController.navigate("news_detail/$encodedUrl")
+                                        newsScreenViewModel.setFavourite(item)
+                                    }
+                                )
                             }
                         }
                     }
