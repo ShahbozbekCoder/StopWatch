@@ -3,6 +3,7 @@ package com.shahbozbek.stopwatch.di
 import android.content.Context
 import androidx.room.Room
 import com.shahbozbek.stopwatch.data.database.ArticleDatabase
+import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.data.remote.WeatherApiInterface
 import com.shahbozbek.stopwatch.data.remote.NewsApiInterface
 import com.shahbozbek.stopwatch.data.remote.RetrofitBuilder
@@ -29,8 +30,16 @@ object AppModule {
         ).build()
     }
 
+    @[Provides Reusable]
+    fun provideFavouritesDao(database: ArticleDatabase) = database.favouritesDao()
+
     @Provides
-    fun provideDao(database: ArticleDatabase) = database.articleDao
+    fun provideDao(database: ArticleDatabase) = database.articleDao()
+
+    @[Provides Reusable]
+    fun provideNetworkUtils(@ApplicationContext context: Context): NetworkUtils {
+        return NetworkUtils(context)
+    }
 
     @[Provides Reusable]
     fun provideWeatherApi(): WeatherApiInterface {
@@ -56,13 +65,16 @@ object AppModule {
         @ApplicationContext context: Context,
         weatherApiInterface: WeatherApiInterface,
         newsApiInterface: NewsApiInterface,
-        articleDatabase: ArticleDatabase
+        articleDatabase: ArticleDatabase,
+        networkUtils: NetworkUtils
     ): Repository {
         return RepositoryImpl(
             weatherApiInterface = weatherApiInterface,
             context = context,
             newsApiInterface = newsApiInterface,
-            articleDatabase = articleDatabase
+            networkUtils = networkUtils,
+            articleDao = articleDatabase.articleDao(),
+            favouritesDao = articleDatabase.favouritesDao()
         )
     }
 

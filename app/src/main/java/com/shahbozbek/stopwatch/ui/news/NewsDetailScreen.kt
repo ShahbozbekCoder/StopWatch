@@ -22,8 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.shahbozbek.stopwatch.data.models.newsdata.Article
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -42,10 +40,8 @@ fun NewsDetailScreen(
             FloatingActionButton(onClick = {
                 val favourite = newsDetailScreenViewModel.getFavourite()
                 favourite?.let {
-                    if (!it.isFavourite) {
-                        newsDetailScreenViewModel.insertFavouriteArticle(it)
-                        it.isFavourite = true
-                    }
+                    newsDetailScreenViewModel.insertFavouriteArticle(it)
+
                     Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
                 }
             }) {

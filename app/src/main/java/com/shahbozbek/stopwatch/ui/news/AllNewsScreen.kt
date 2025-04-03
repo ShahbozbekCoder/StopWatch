@@ -1,6 +1,7 @@
 package com.shahbozbek.stopwatch.ui.news
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -22,10 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.shahbozbek.stopwatch.utils.Result
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,27 +44,23 @@ fun AllNewsScreen(
     newsScreenViewModel: NewsScreenViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    LaunchedEffect(Unit) {
-        newsScreenViewModel.getNews()
-    }
+
     val newsState = newsScreenViewModel.newsData.collectAsState()
-    val listOfCategory = remember {
-        listOf(
-            "General",
-            "Business",
-            "Entertainment",
-            "Health",
-            "Science",
-            "Sports",
-            "Technology"
-        )
-    }
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    val listOfCategory by newsScreenViewModel.listOfCategory.collectAsState()
+    val selectedCategory by newsScreenViewModel.selectedCategory.collectAsState("General")
     val scope = rememberCoroutineScope()
     val refreshState = rememberPullToRefreshState()
-    val isRefreshing = newsState.value is Result.Loading
+    val isRefreshing = remember {
+        mutableStateOf(newsState.value is Result.Loading)
+    }
+
+    LaunchedEffect(newsState.value) {
+        Log.d("VVVVV", "getNewsData: Launched effect")
+        if (newsState.value is Result.Success) {
+            isRefreshing.value = newsState.value is Result.Loading
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -75,18 +74,17 @@ fun AllNewsScreen(
             LazyRow(
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
-                items(listOfCategory.size) { index ->
+                items(listOfCategory) { item ->
                     FilterChip(
-                        selected = selectedIndex == index,
+                        selected = selectedCategory == item,
                         onClick = {
-                            selectedIndex = index
                             scope.launch {
-                                newsScreenViewModel.getNews(listOfCategory[index])
+                                newsScreenViewModel.getNewsData(item)
                             }
                         },
                         label = {
                             Text(
-                                text = listOfCategory[index],
+                                text = item,
                                 modifier = Modifier.padding(vertical = 10.dp)
                             )
                         },
@@ -103,28 +101,31 @@ fun AllNewsScreen(
             PullToRefreshBox(
                 state = refreshState,
                 onRefresh = {
-                    newsScreenViewModel.getNews(listOfCategory[selectedIndex])
+                    newsScreenViewModel.getNewsData(selectedCategory)
                 },
-                isRefreshing = isRefreshing,
+                isRefreshing = newsState.value is Result.Loading,
                 modifier = Modifier.weight(1f)
             ) {
                 when (newsState.value) {
                     is Result.Error -> {
                         Text(text = newsState.value.toString())
                     }
+
                     is Result.Loading -> {}
                     is Result.Success -> {
-                        val data = (newsState.value as Result.Success).data?.articles
+
                         LazyColumn {
-                            items(data?.size ?: 0) { idx ->
-                                NewsItem(
-                                    newsItem = data!![idx],
-                                    onClick = {
-                                        val encodedUrl = Uri.encode(data[idx].url)
-                                        navController.navigate("news_detail/$encodedUrl")
-                                        newsScreenViewModel.setFavourite(data[idx])
-                                    }
-                                )
+                            (newsState.value as? Result.Success)?.let {
+                                items(it.data.articles) { item ->
+                                    NewsItem(
+                                        newsItem = item,
+                                        onClick = {
+                                            val encodedUrl = Uri.encode(item.url)
+                                            navController.navigate("news_detail/$encodedUrl")
+                                            newsScreenViewModel.setFavourite(item)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
