@@ -38,6 +38,7 @@ fun AppNavigation(navHostController: NavHostController, paddingValues: PaddingVa
                 }
             }
         }
+
     }
 }
 
@@ -57,7 +58,6 @@ fun NewsNavigation(
         composable("all_news_screen") {
             AllNewsScreen(
                 navController = navController,
-                newsScreenViewModel = newsScreenViewModel
             )
         }
 
@@ -72,14 +72,12 @@ fun NewsNavigation(
             val newsUrl = backStackEntry.arguments?.getString("newsUrl")
             NewsDetailScreen(
                 newsUrl,
-                newsScreenViewModel
             )
         }
 
         composable("favourites_screen") {
             FavouritesScreen(
-                navController = navController,
-                newsScreenViewModel = newsScreenViewModel
+                navController = navController
             )
         }
     }

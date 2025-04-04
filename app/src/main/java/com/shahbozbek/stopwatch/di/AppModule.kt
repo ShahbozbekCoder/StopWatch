@@ -2,7 +2,7 @@ package com.shahbozbek.stopwatch.di
 
 import android.content.Context
 import androidx.room.Room
-import com.shahbozbek.stopwatch.data.database.ArticleDatabase
+import com.shahbozbek.stopwatch.data.local.ArticleDatabase
 import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.data.remote.WeatherApiInterface
 import com.shahbozbek.stopwatch.data.remote.NewsApiInterface

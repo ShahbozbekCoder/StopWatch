@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.shahbozbek.stopwatch.R
 import com.shahbozbek.stopwatch.ui.theme.Purple40
@@ -54,6 +55,8 @@ fun SetUpNavigation() {
     }
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
+    val navigationState = navController.currentBackStackEntryAsState()
+    val currentRoute = navigationState.value?.destination?.route
 
     ModalNavigationDrawer(
         drawerState = drawerState,
