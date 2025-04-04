@@ -1,12 +1,10 @@
-package com.shahbozbek.stopwatch.data.database
+package com.shahbozbek.stopwatch.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import com.shahbozbek.stopwatch.data.models.newsdata.Article
 import com.shahbozbek.stopwatch.data.models.newsdata.FavouriteArticle
 
 @Dao

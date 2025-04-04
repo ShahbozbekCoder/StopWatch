@@ -1,6 +1,5 @@
 package com.shahbozbek.stopwatch.usecases
 
-import com.shahbozbek.stopwatch.data.database.ArticleDao
 import com.shahbozbek.stopwatch.repository.Repository
 import javax.inject.Inject
 

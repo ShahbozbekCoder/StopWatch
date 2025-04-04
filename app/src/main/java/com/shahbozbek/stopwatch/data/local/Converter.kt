@@ -1,4 +1,4 @@
-package com.shahbozbek.stopwatch.data.database
+package com.shahbozbek.stopwatch.data.local
 
 import androidx.room.TypeConverter
 import com.shahbozbek.stopwatch.data.models.newsdata.Source

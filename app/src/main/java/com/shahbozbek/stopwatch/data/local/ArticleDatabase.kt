@@ -1,4 +1,4 @@
-package com.shahbozbek.stopwatch.data.database
+package com.shahbozbek.stopwatch.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

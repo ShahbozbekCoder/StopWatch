@@ -7,9 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.shahbozbek.stopwatch.data.database.ArticleDao
-import com.shahbozbek.stopwatch.data.database.ArticleDatabase
-import com.shahbozbek.stopwatch.data.database.FavouritesDao
+import com.shahbozbek.stopwatch.data.local.ArticleDao
+import com.shahbozbek.stopwatch.data.local.FavouritesDao
 import com.shahbozbek.stopwatch.data.models.newsdata.Article
 import com.shahbozbek.stopwatch.data.models.newsdata.FavouriteArticle
 import com.shahbozbek.stopwatch.data.models.newsdata.NewsData

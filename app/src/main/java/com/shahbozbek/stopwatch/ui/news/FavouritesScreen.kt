@@ -23,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
 @Composable
 fun FavouritesScreen(
-    newsScreenViewModel: NewsScreenViewModel, navController: NavController
+    newsScreenViewModel: NewsScreenViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val favouriteNews by newsScreenViewModel.getFavouriteNews()
         .collectAsState(initial = emptyList())

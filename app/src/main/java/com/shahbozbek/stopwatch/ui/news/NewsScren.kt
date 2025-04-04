@@ -1,19 +1,23 @@
 package com.shahbozbek.stopwatch.ui.news
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.shahbozbek.stopwatch.navigation.NewsNavigation
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NewsScreen(
@@ -30,12 +35,10 @@ fun NewsScreen(
     val items = listOf(Pair("Home", "all_news_screen"), Pair("Favourites", "favourites_screen"))
     val icons = listOf(Icons.Default.Home, Icons.Default.Favorite)
     val navController = rememberNavController()
-
+    val navigationState = navController.currentBackStackEntryAsState()
+    val currentRoute = navigationState.value?.destination?.route
     Scaffold(
-        bottomBar =  {
-
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+        bottomBar = {
 
             if (currentRoute in items.map { it.second }) {
                 NavigationBar(modifier = Modifier.fillMaxWidth()) {
@@ -59,6 +62,25 @@ fun NewsScreen(
                 }
             }
 
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "News")
+                    Log.d("NewsScreen", "currentRoute: $currentRoute")
+                },
+                navigationIcon = {
+                    if (currentRoute == "news_detail/{newsUrl}") IconButton(
+                        onClick = { navController.popBackStack() },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
+                }
+            )
         }
     ) {
         NewsNavigation(navController = navController, paddingValues = paddingValues)
