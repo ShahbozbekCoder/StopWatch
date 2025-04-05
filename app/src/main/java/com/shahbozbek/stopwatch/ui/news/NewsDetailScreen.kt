@@ -38,12 +38,12 @@ fun NewsDetailScreen(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                val favourite = newsDetailScreenViewModel.getFavourite()
+                val favourite = newsDetailScreenViewModel.getArticle()
                 favourite?.let {
                     newsDetailScreenViewModel.insertFavouriteArticle(it)
 
                     Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
-                }
+                } ?: Toast.makeText(context, "No news available", Toast.LENGTH_SHORT).show()
             }) {
                 Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
             }

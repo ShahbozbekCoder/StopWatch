@@ -35,10 +35,12 @@ fun NewsScreen(
     val items = listOf(Pair("Home", "all_news_screen"), Pair("Favourites", "favourites_screen"))
     val icons = listOf(Icons.Default.Home, Icons.Default.Favorite)
     val navController = rememberNavController()
-    val navigationState = navController.currentBackStackEntryAsState()
-    val currentRoute = navigationState.value?.destination?.route
+
     Scaffold(
         bottomBar = {
+
+            val navigationState = navController.currentBackStackEntryAsState()
+            val currentRoute = navigationState.value?.destination?.route
 
             if (currentRoute in items.map { it.second }) {
                 NavigationBar(modifier = Modifier.fillMaxWidth()) {
@@ -61,26 +63,6 @@ fun NewsScreen(
                     }
                 }
             }
-
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "News")
-                    Log.d("NewsScreen", "currentRoute: $currentRoute")
-                },
-                navigationIcon = {
-                    if (currentRoute == "news_detail/{newsUrl}") IconButton(
-                        onClick = { navController.popBackStack() },
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier.padding(start = 10.dp)
-                        )
-                    }
-                }
-            )
         }
     ) {
         NewsNavigation(navController = navController, paddingValues = paddingValues)

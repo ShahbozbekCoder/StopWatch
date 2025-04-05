@@ -14,8 +14,6 @@ interface Repository {
 
     fun getWeather(): Flow<WeatherData?>
 
-    fun getNews(category: String = ""): Flow<NewsData?>
-
     suspend fun insertFavouriteArticle(article: Article)
 
     fun getFavouriteArticles(): Flow<List<FavouriteArticle>>

@@ -3,6 +3,7 @@ package com.shahbozbek.stopwatch.di
 import android.content.Context
 import androidx.room.Room
 import com.shahbozbek.stopwatch.data.local.ArticleDatabase
+import com.shahbozbek.stopwatch.data.remote.HttpInterceptor
 import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.data.remote.WeatherApiInterface
 import com.shahbozbek.stopwatch.data.remote.NewsApiInterface
@@ -16,6 +17,9 @@ import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -26,15 +30,16 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             ArticleDatabase::class.java,
-            "article_database"
-        ).build()
+            ArticleDatabase.DATABASE_NAME
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @[Provides Reusable]
     fun provideFavouritesDao(database: ArticleDatabase) = database.favouritesDao()
 
-    @Provides
-    fun provideDao(database: ArticleDatabase) = database.articleDao()
+    @[Provides Reusable]
+    fun provideArticleDao(database: ArticleDatabase) = database.articleDao()
 
     @[Provides Reusable]
     fun provideNetworkUtils(@ApplicationContext context: Context): NetworkUtils {

@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -35,49 +34,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shahbozbek.stopwatch.R
+import com.shahbozbek.stopwatch.utils.Constants
+import com.shahbozbek.stopwatch.utils.Constants.CITY_NAME
+import com.shahbozbek.stopwatch.utils.Constants.HUMIDITY
+import com.shahbozbek.stopwatch.utils.Constants.LAST_UPDATE
+import com.shahbozbek.stopwatch.utils.Constants.PRESSURE
+import com.shahbozbek.stopwatch.utils.Constants.SUNRISE
+import com.shahbozbek.stopwatch.utils.Constants.SUNSET
+import com.shahbozbek.stopwatch.utils.Constants.WIND_SPEED
+import com.shahbozbek.stopwatch.utils.Constants.backgrounds
+import com.shahbozbek.stopwatch.utils.Constants.clouds
+import com.shahbozbek.stopwatch.utils.Constants.rain
+import com.shahbozbek.stopwatch.utils.Constants.snow
+import com.shahbozbek.stopwatch.utils.Constants.sunny
 
 @Composable
 fun MainWeatherScreen(
-    weatherScreenViewModel: WeatherScreenViewModel,
-    myTime: Long
+    weatherScreenViewModel: WeatherScreenViewModel, myTime: Long
 ) {
 
     val currentTime = remember {
         mutableLongStateOf(myTime)
     }
-
-    val backgrounds = listOf(
-        Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFF7BCAEE),
-                Color(0xFF2F4042)
-            )
-        ),
-        Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFF3D6070),
-                Color(0xFF576D70)
-            )
-        ),
-        Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFFC2E1EF),
-                Color(0xFF8BBDC0)
-            )
-        ),
-        Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFF46B5E7),
-                Color(0xFF1BD9F1)
-            )
-        ),
-        Brush.verticalGradient(
-            colors = listOf(
-                Color(0xFF8FCEEE),
-                Color(0xFFC6D2D3)
-            )
-        )
-    )
 
     val state = weatherScreenViewModel.state.collectAsState()
 
@@ -87,32 +65,21 @@ fun MainWeatherScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                when (conditions) {
-                    "Haze", "Clouds", "Foggy", "Partly Clouds", "Overcast", "Mist" -> {
-                        backgrounds[0]
-                    }
-
-                    "Rain", "Light Rain", "Drizzle", "Moderate Rain", "Showers", "Heavy Rain" -> {
-                        backgrounds[1]
-                    }
-
-                    "Snow", "Light Snow", "Moderate Snow", "Heaby Snow", "Blizzard" -> {
-                        backgrounds[2]
-                    }
-
-                    "Sunny", "Clear", "Clear sky" -> {
-                        backgrounds[3]
-                    }
-
-                    else -> {
-                        backgrounds[4]
-                    }
+                if (clouds.contains(conditions)) {
+                    backgrounds[0]
+                } else if (rain.contains(conditions)) {
+                    backgrounds[1]
+                } else if (snow.contains(conditions)) {
+                    backgrounds[2]
+                } else if (sunny.contains(conditions)) {
+                    backgrounds[3]
+                } else {
+                    backgrounds[4]
                 }
-            ).verticalScroll(
-                state = rememberScrollState()
             )
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .verticalScroll(
+                state = rememberScrollState()
+            ), horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -125,8 +92,7 @@ fun MainWeatherScreen(
                 onClick = {
                     weatherScreenViewModel.getWeather()
                     currentTime.longValue = System.currentTimeMillis()
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .size(48.dp)
                     .padding(end = 8.dp)
@@ -141,8 +107,7 @@ fun MainWeatherScreen(
 
             if (state.value.isLoading) {
                 CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
+                    color = Color.White, modifier = Modifier.align(Alignment.Center)
                 )
             }
 
@@ -159,10 +124,7 @@ fun MainWeatherScreen(
             }
         }
         Text(
-            text = "Tashkent",
-            color = Color.White,
-            fontSize = 48.sp,
-            fontFamily = FontFamily.Serif
+            text = CITY_NAME, color = Color.White, fontSize = 48.sp, fontFamily = FontFamily.Serif
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
@@ -187,44 +149,36 @@ fun MainWeatherScreen(
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        when (conditions) {
-            "Haze", "Clouds", "Foggy", "Partly Clouds", "Overcast", "Mist" -> {
-                Image(
-                    painter = painterResource(id = R.drawable.cloudly),
-                    contentDescription = "Cloudy",
-                    modifier = Modifier.width(150.dp)
-                )
+        if (clouds.contains(conditions)) {
+            Image(
+                painter = painterResource(id = R.drawable.cloudly),
+                contentDescription = clouds[0],
+                modifier = Modifier.width(150.dp)
+            )
 
-            }
-            "Rain", "Light Rain", "Drizzle", "Moderate Rain", "Showers", "Heavy Rain" -> {
-                Image(
-                    painter = painterResource(id = R.drawable.rainy),
-                    contentDescription = "Rain",
-                    modifier = Modifier.width(150.dp)
-                )
-            }
-            "Snow", "Light Snow", "Moderate Snow", "Heaby Snow", "Blizzard" -> {
-                Image(
-                    painter = painterResource(id = R.drawable.snowy),
-                    contentDescription = "Snow",
-                    modifier = Modifier.width(150.dp)
-                )
-            }
-            "Sunny", "Clear", "Clear sky" -> {
-                Image(
-                    painter = painterResource(id = R.drawable.sunny),
-                    contentDescription = "Sunny",
-                    modifier = Modifier.width(150.dp)
-                    )
-            }
-            else -> {
-                Image(
-                    painter = painterResource(id = R.drawable.sunny),
-                    contentDescription = "Sunny",
-                    modifier = Modifier.width(150.dp)
-                )
-            }
         }
+        if (rain.contains(conditions)) {
+            Image(
+                painter = painterResource(id = R.drawable.rainy),
+                contentDescription = rain[0],
+                modifier = Modifier.width(150.dp)
+            )
+        }
+        if (snow.contains(conditions)) {
+            Image(
+                painter = painterResource(id = R.drawable.snowy),
+                contentDescription = snow[0],
+                modifier = Modifier.width(150.dp)
+            )
+        }
+        if (sunny.contains(conditions)) {
+            Image(
+                painter = painterResource(id = R.drawable.sunny),
+                contentDescription = snow[0],
+                modifier = Modifier.width(150.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = Modifier
@@ -235,12 +189,12 @@ fun MainWeatherScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.humidity),
-                contentDescription = "Humidity",
+                contentDescription = HUMIDITY,
                 modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Humidity:",
+                text = HUMIDITY,
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -263,12 +217,12 @@ fun MainWeatherScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.wind_speed),
-                contentDescription = "Wind",
+                contentDescription = WIND_SPEED,
                 modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Wind Speed:",
+                text = WIND_SPEED,
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -291,12 +245,12 @@ fun MainWeatherScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.pressure),
-                contentDescription = "Pressure",
+                contentDescription = PRESSURE,
                 modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Pressure:",
+                text = PRESSURE,
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -319,12 +273,12 @@ fun MainWeatherScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.sunrise),
-                contentDescription = "Sunrise",
+                contentDescription = SUNRISE,
                 modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Sunrise:",
+                text = SUNRISE,
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -347,12 +301,12 @@ fun MainWeatherScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.sunset),
-                contentDescription = "Sunset",
+                contentDescription = SUNSET,
                 modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Sunset:",
+                text = SUNSET,
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -372,8 +326,9 @@ fun MainWeatherScreen(
                 .height(16.dp)
                 .weight(1f)
         )
+        val myCurrentTime = formatUnixTime2(currentTime.longValue)
         Text(
-            text = "Last update: ${formatUnixTime2(currentTime.longValue)}",
+            text = LAST_UPDATE + myCurrentTime,
             color = Color.White,
             fontSize = 16.sp,
             fontFamily = FontFamily.Serif,
@@ -388,7 +343,6 @@ fun MainWeatherScreen(
 @Composable
 fun MainWeatherScreenPreview() {
     MainWeatherScreen(
-        hiltViewModel(),
-        0L
+        hiltViewModel(), myTime = 0L
     )
 }

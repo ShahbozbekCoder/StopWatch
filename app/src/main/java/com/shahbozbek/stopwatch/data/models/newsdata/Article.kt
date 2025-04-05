@@ -4,16 +4,17 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.shahbozbek.stopwatch.utils.Constants.ARTICLES_TABLE_NAME
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
-    tableName = "article_table",
+    tableName = ARTICLES_TABLE_NAME,
     indices = [Index(value = ["url"], unique = true)]
 )
 data class Article(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val id: Int,
     val author: String? = null,
     val content: String? = null,
     val description: String? = null,

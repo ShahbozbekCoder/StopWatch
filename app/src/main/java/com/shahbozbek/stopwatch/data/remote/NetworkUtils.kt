@@ -8,10 +8,13 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkUtils @Inject constructor (@ApplicationContext private val context: Context) {
+
     fun isNetworkAvailable(): Boolean {
+
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activityNetwork = connectivityManager.activeNetworkInfo
+
         return activityNetwork != null && activityNetwork.isConnected
     }
 }

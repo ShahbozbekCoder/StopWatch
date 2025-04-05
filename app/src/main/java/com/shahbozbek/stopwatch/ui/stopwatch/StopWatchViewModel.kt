@@ -8,8 +8,11 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.shahbozbek.stopwatch.repository.RepositoryImpl
 import com.shahbozbek.stopwatch.R
+import com.shahbozbek.stopwatch.repository.RepositoryImpl
+import com.shahbozbek.stopwatch.utils.Constants.RESET
+import com.shahbozbek.stopwatch.utils.Constants.START
+import com.shahbozbek.stopwatch.utils.Constants.STOP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -20,25 +23,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StopWatchViewModel @Inject constructor (
+class StopWatchViewModel @Inject constructor(
     private val myRepositoryImpl: RepositoryImpl,
     @ApplicationContext private val context: Context
-): ViewModel() {
+) : ViewModel() {
 
     var elapsedTime by mutableLongStateOf(0L)
         private set
 
     private var startTime = 0L
-    var running: MutableStateFlow<Boolean> =  MutableStateFlow(false)
+    var running: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var job: Job? = null
 
     private val soundPool = SoundPool.Builder().setMaxStreams(3).build()
     private val soundMap = mutableMapOf<String, Int>()
 
     init {
-        soundMap["start"] = soundPool.load(context, R.raw.start_watch, 1)
-        soundMap["stop"] = soundPool.load(context, R.raw.stop_watch, 1)
-        soundMap["reset"] = soundPool.load(context, R.raw.reset_watch, 1)
+        soundMap[START] = soundPool.load(context, R.raw.start_watch, 1)
+        soundMap[STOP] = soundPool.load(context, R.raw.stop_watch, 1)
+        soundMap[RESET] = soundPool.load(context, R.raw.reset_watch, 1)
 
         viewModelScope.launch {
 
@@ -58,7 +61,7 @@ class StopWatchViewModel @Inject constructor (
 
     fun startWatch() {
 
-        playSound("start")
+        playSound(START)
 
         if (!running.value && job == null) {
 
@@ -82,7 +85,7 @@ class StopWatchViewModel @Inject constructor (
 
     fun stopWatch() {
 
-        playSound("stop")
+        playSound(STOP)
 
         running.value = false
 
@@ -93,7 +96,7 @@ class StopWatchViewModel @Inject constructor (
 
     fun resetWatch() {
 
-        playSound("reset")
+        playSound(RESET)
 
         job?.cancel()
 

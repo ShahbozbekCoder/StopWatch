@@ -1,4 +1,4 @@
-package com.shahbozbek.stopwatch.navigation
+package com.shahbozbek.stopwatch.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,23 +40,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.shahbozbek.stopwatch.R
+import com.shahbozbek.stopwatch.navigation.AppNavigation
+import com.shahbozbek.stopwatch.navigation.listOfNavItems
 import com.shahbozbek.stopwatch.ui.theme.Purple40
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetUpNavigation() {
+fun MainScreen() {
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
-    val navigationState = navController.currentBackStackEntryAsState()
-    val currentRoute = navigationState.value?.destination?.route
 
     ModalNavigationDrawer(
         drawerState = drawerState,

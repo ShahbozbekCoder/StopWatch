@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation (libs.compose)
     implementation (libs.glide)
+    implementation(libs.landscapist.glide)
     ksp(libs.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

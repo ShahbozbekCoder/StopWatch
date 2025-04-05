@@ -12,8 +12,6 @@ interface WeatherApiInterface {
 
     @GET("weather")
     suspend fun getWeather(
-        @Header("Content-Type") contentType: String = "application/json",
-        @Header("Accept") accept: String = "application/json",
         @Query("q") city: String = "Tashkent",
         @Query("appid") apiKey: String = API_FROM_WEATHER
     ): Response<WeatherData>

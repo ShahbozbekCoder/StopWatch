@@ -26,9 +26,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.shahbozbek.stopwatch.utils.Constants.RESET
+import com.shahbozbek.stopwatch.utils.Constants.START
+import com.shahbozbek.stopwatch.utils.Constants.STOP
+import java.util.Locale
 
 @Composable
-fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingValues: PaddingValues) {
+fun StopWatchScreen(
+    myViewModel: StopWatchViewModel = hiltViewModel(),
+    paddingValues: PaddingValues
+) {
 
     val elapsedTime by rememberUpdatedState(newValue = myViewModel.elapsedTime)
 
@@ -41,14 +48,16 @@ fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingVa
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner) {
+
         val observer = object : DefaultLifecycleObserver {
-        override fun onResume(owner: LifecycleOwner) {
-            myViewModel.startWatch()
+            override fun onResume(owner: LifecycleOwner) {
+                myViewModel.startWatch()
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                myViewModel.stopWatch()
+            }
         }
-        override fun onPause(owner: LifecycleOwner) {
-            myViewModel.stopWatch()
-        }
-    }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
@@ -56,7 +65,8 @@ fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingVa
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -66,35 +76,40 @@ fun StopWatchScreen(myViewModel: StopWatchViewModel = hiltViewModel(), paddingVa
             text = formattedTime,
             fontSize = 42.sp
         )
+
         Spacer(modifier = Modifier.height(80.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Button(onClick = { if (!isRunning) {
-                myViewModel.startWatch()
-            } else {
-                myViewModel.stopWatch()
-            } }) {
-                Text(text = if (isRunning) "Stop" else "Start")
+            Button(onClick = {
+                if (!isRunning) {
+                    myViewModel.startWatch()
+                } else {
+                    myViewModel.stopWatch()
+                }
+            }) {
+                Text(text = if (isRunning) STOP else START)
             }
             Button(onClick = {
                 myViewModel.resetWatch()
             }) {
-                Text(text = "Reset")
+                Text(text = RESET)
             }
         }
     }
 }
 
 fun formatTime(time: Long): String {
-    val seconds = ((time/ 1000) % 60).toInt()
+    val seconds = ((time / 1000) % 60).toInt()
     val minutes = ((time / (1000 * 60)) % 60).toInt()
     val hours = (time / (1000 * 60 * 60)).toInt()
 
-    val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    val formattedTime =
+        String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
 
     return formattedTime
 }

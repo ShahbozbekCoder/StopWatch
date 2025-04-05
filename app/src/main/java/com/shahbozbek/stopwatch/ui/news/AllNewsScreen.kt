@@ -1,7 +1,7 @@
 package com.shahbozbek.stopwatch.ui.news
 
 import android.net.Uri
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +20,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.utils.Result
 import kotlinx.coroutines.launch
 
@@ -37,18 +38,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun AllNewsScreen(
     newsScreenViewModel: NewsScreenViewModel = hiltViewModel(),
-    navController: NavController,
+    navController: NavController
 ) {
-
-    LaunchedEffect(null) {
-        newsScreenViewModel.getNewsData()
-    }
 
     val newsState by newsScreenViewModel.newsData.collectAsState()
     val listOfCategory by newsScreenViewModel.listOfCategory.collectAsState()
     val selectedCategory by newsScreenViewModel.selectedCategory.collectAsState("General")
     val refreshState = rememberPullToRefreshState()
     val isRefreshing = newsState is Result.Loading
+    val context = LocalContext.current
+    val networkUtils = NetworkUtils(context)
+    if (!networkUtils.isNetworkAvailable()) {
+        Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+    }
+    val scope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -67,8 +70,7 @@ fun AllNewsScreen(
                     FilterChip(
                         selected = selectedCategory == item,
                         onClick = {
-                                newsScreenViewModel.getNewsData(item)
-                                Log.d("AllScreen", "isRefreshing: $isRefreshing")
+                            newsScreenViewModel.getNewsData(item)
                         },
                         label = {
                             Text(
@@ -86,10 +88,16 @@ fun AllNewsScreen(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
+
             PullToRefreshBox(
                 state = refreshState,
                 onRefresh = {
-                    newsScreenViewModel.getNewsData(selectedCategory)
+                    if (!networkUtils.isNetworkAvailable()) {
+                        scope.launch {
+                            refreshState.snapTo(0f)
+                        }
+                        Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                    } else newsScreenViewModel.getNewsData(selectedCategory)
                 },
                 isRefreshing = isRefreshing,
                 modifier = Modifier.weight(1f)
@@ -99,9 +107,7 @@ fun AllNewsScreen(
                         Text(text = newsState.toString())
                     }
 
-                    is Result.Loading -> {
-                        Log.d("AllScreen", "isRefreshing: $isRefreshing")
-                    }
+                    is Result.Loading -> {}
 
                     is Result.Success -> {
 
@@ -114,7 +120,7 @@ fun AllNewsScreen(
                                     onClick = {
                                         val encodedUrl = Uri.encode(item.url)
                                         navController.navigate("news_detail/$encodedUrl")
-                                        newsScreenViewModel.setFavourite(item)
+                                        newsScreenViewModel.setArticle(item)
                                     }
                                 )
                             }

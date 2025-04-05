@@ -58,6 +58,7 @@ fun NewsNavigation(
         composable("all_news_screen") {
             AllNewsScreen(
                 navController = navController,
+                newsScreenViewModel = newsScreenViewModel
             )
         }
 
@@ -71,13 +72,15 @@ fun NewsNavigation(
         ) { backStackEntry ->
             val newsUrl = backStackEntry.arguments?.getString("newsUrl")
             NewsDetailScreen(
-                newsUrl,
+                newsUrl = newsUrl,
+                newsDetailScreenViewModel = newsScreenViewModel
             )
         }
 
         composable("favourites_screen") {
             FavouritesScreen(
-                navController = navController
+                navController = navController,
+                newsScreenViewModel = newsScreenViewModel
             )
         }
     }

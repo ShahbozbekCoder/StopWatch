@@ -3,6 +3,7 @@ package com.shahbozbek.stopwatch.data.remote
 import com.shahbozbek.stopwatch.data.models.newsdata.NewsData
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Query
 
 private const val API_FROM_NEWS = "9523c2528f664c81859233987155bc42"

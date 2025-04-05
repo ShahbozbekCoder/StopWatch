@@ -1,11 +1,12 @@
 package com.shahbozbek.stopwatch.ui.news
 
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shahbozbek.stopwatch.data.models.newsdata.Article
 import com.shahbozbek.stopwatch.data.models.newsdata.FavouriteArticle
 import com.shahbozbek.stopwatch.data.models.newsdata.NewsData
+import com.shahbozbek.stopwatch.data.remote.NetworkUtils
 import com.shahbozbek.stopwatch.ui.theme.ThemePreferences
 import com.shahbozbek.stopwatch.usecases.DeleteFavouriteArticleUseCase
 import com.shahbozbek.stopwatch.usecases.GetFavouriteNewsUseCase
@@ -27,7 +28,8 @@ class NewsScreenViewModel @Inject constructor(
     private val getFavouriteNewsUseCase: GetFavouriteNewsUseCase,
     private val insertFavouriteArticleUseCase: InsertFavouriteArticleUseCase,
     private val deleteFavouriteArticleUseCase: DeleteFavouriteArticleUseCase,
-    private val themePreferences: ThemePreferences
+    private val themePreferences: ThemePreferences,
+    private val networkUtils: NetworkUtils
 ) : ViewModel() {
 
     val listOfCategory: StateFlow<List<String>> = MutableStateFlow(
@@ -47,32 +49,16 @@ class NewsScreenViewModel @Inject constructor(
     private val _newsData = MutableStateFlow<Result>(Result.Loading)
     val newsData: StateFlow<Result> get() = _newsData.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> get() = _isLoading.asStateFlow()
-
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.d("VVVVV", "getNewsData: error")
         _newsData.value = Result.Error(throwable.message ?: "Unknown error")
-        _isLoading.value = false
     }
 
     private val _isDarkThemeEnabled = MutableStateFlow(themePreferences.isDarkThemeEnabled())
     val isDarkThemeEnabled: StateFlow<Boolean> get() = _isDarkThemeEnabled.asStateFlow()
 
-//    fun getNews(category: String = "") {
-//        viewModelScope.launch(coroutineExceptionHandler) {
-//
-//            _newsData.value = Result.Loading
-//
-//            getNewsDataUseCase.invoke(category).collect { newsData ->
-//                _newsData.value = Result.Success(newsData)
-//            }
-//        }
-//    }
-
-//    init {
-//        getNewsData()
-//    }
+    init {
+        getNewsData()
+    }
 
     fun insertFavouriteArticle(article: Article) {
         viewModelScope.launch {
@@ -97,7 +83,6 @@ class NewsScreenViewModel @Inject constructor(
             selectedCategory.value = category
 
             getNewsDataUseCase.invoke(category).collectLatest { news ->
-                Log.d("VVVVV", "getNewsData: sucess")
                 _newsData.value = Result.Success(NewsData(news))
             }
         }
@@ -105,13 +90,12 @@ class NewsScreenViewModel @Inject constructor(
 
     private var myFavourite: Article? = null
 
-    fun setFavourite(article: Article) {
+    fun setArticle(article: Article) {
         myFavourite = article
     }
 
-    fun getFavourite(): Article? {
+    fun getArticle(): Article? {
         return myFavourite
     }
-
 
 }
