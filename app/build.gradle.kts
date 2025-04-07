@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.shahbozbek.stopwatch"
+    namespace = "com.shahbozbek.superApp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.shahbozbek.stopwatch"
+        applicationId = "com.shahbozbek.superApp"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
