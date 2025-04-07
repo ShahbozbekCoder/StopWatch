@@ -1,18 +1,18 @@
 package com.shahbozbek.superApp.data.local
 
 import androidx.room.TypeConverter
-import com.shahbozbek.superApp.data.models.newsdata.Source
+import com.shahbozbek.superApp.data.models.newsDataDto.SourceDto
 
 class Converters {
 
     @TypeConverter
-    fun fromSource(source: Source): String? {
-        return source.name
+    fun fromSource(sourceDto: SourceDto): String? {
+        return sourceDto.name
     }
 
     @TypeConverter
-    fun toSource(name: String): Source{
-        return Source(name, name)
+    fun toSource(name: String): SourceDto{
+        return SourceDto(name, name)
     }
 
 }

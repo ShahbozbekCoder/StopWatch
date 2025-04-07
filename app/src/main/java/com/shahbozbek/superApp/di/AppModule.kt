@@ -7,9 +7,9 @@ import com.shahbozbek.superApp.data.remote.NetworkUtils
 import com.shahbozbek.superApp.data.remote.WeatherApiInterface
 import com.shahbozbek.superApp.data.remote.NewsApiInterface
 import com.shahbozbek.superApp.data.remote.RetrofitBuilder
-import com.shahbozbek.superApp.repository.Repository
-import com.shahbozbek.superApp.repository.RepositoryImpl
-import com.shahbozbek.superApp.ui.theme.ThemePreferences
+import com.shahbozbek.superApp.domain.repository.Repository
+import com.shahbozbek.superApp.data.repositoryImpl.RepositoryImpl
+import com.shahbozbek.superApp.presentation.ui.theme.ThemePreferences
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable

@@ -1,6 +1,6 @@
 package com.shahbozbek.superApp.data.remote
 
-import com.shahbozbek.superApp.data.models.newsdata.NewsData
+import com.shahbozbek.superApp.data.models.newsDataDto.NewsDataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,6 +14,6 @@ interface NewsApiInterface {
         @Query("country") country: String = "us",
         @Query("category") category: String = "",
         @Query("apiKey") apiKey: String = API_FROM_NEWS
-    ): Response<NewsData>
+    ): Response<NewsDataDto>
 
 }

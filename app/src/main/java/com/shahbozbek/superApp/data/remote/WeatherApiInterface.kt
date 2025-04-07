@@ -1,6 +1,6 @@
 package com.shahbozbek.superApp.data.remote
 
-import com.shahbozbek.superApp.data.models.weatherdata.WeatherData
+import com.shahbozbek.superApp.data.models.weatherDataDto.WeatherDataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,6 +13,6 @@ interface WeatherApiInterface {
     suspend fun getWeather(
         @Query("q") city: String = "Tashkent",
         @Query("appid") apiKey: String = API_FROM_WEATHER
-    ): Response<WeatherData>
+    ): Response<WeatherDataDto>
 
 }

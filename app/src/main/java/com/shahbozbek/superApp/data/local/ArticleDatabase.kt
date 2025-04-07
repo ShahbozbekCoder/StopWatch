@@ -3,10 +3,10 @@ package com.shahbozbek.superApp.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.shahbozbek.superApp.data.models.newsdata.Article
-import com.shahbozbek.superApp.data.models.newsdata.FavouriteArticle
+import com.shahbozbek.superApp.data.models.newsDataDto.ArticleDto
+import com.shahbozbek.superApp.data.models.newsDataDto.FavouriteArticleDto
 
-@Database(entities = [Article::class, FavouriteArticle::class], version = 2, exportSchema = false)
+@Database(entities = [ArticleDto::class, FavouriteArticleDto::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ArticleDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao

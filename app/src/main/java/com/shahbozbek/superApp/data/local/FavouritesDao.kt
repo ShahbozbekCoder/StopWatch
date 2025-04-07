@@ -5,18 +5,18 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.shahbozbek.superApp.data.models.newsdata.FavouriteArticle
+import com.shahbozbek.superApp.data.models.newsDataDto.FavouriteArticleDto
 
 @Dao
 interface FavouritesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavouriteArticle(article: FavouriteArticle)
+    suspend fun insertFavouriteArticle(article: FavouriteArticleDto)
 
     @Query("SELECT * FROM favourite_table")
-    fun getFavouriteArticles(): List<FavouriteArticle>
+    fun getFavouriteArticles(): List<FavouriteArticleDto>
 
     @Delete
-    suspend fun deleteFavouriteArticles(article: FavouriteArticle)
+    suspend fun deleteFavouriteArticles(article: FavouriteArticleDto)
 
 }
