@@ -3,25 +3,23 @@ package com.shahbozbek.superApp.di
 import android.content.Context
 import androidx.room.Room
 import com.shahbozbek.superApp.data.local.ArticleDatabase
-import com.shahbozbek.superApp.data.remote.NetworkUtils
-import com.shahbozbek.superApp.data.remote.WeatherApiInterface
 import com.shahbozbek.superApp.data.remote.NewsApiInterface
 import com.shahbozbek.superApp.data.remote.RetrofitBuilder
-import com.shahbozbek.superApp.domain.repository.Repository
+import com.shahbozbek.superApp.data.remote.WeatherApiInterface
 import com.shahbozbek.superApp.data.repositoryImpl.RepositoryImpl
-import com.shahbozbek.superApp.presentation.ui.theme.ThemePreferences
+import com.shahbozbek.superapp.domain.repository.Repository
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideDatabase(@ApplicationContext context: Context): ArticleDatabase {
         return Room.databaseBuilder(
             context,
@@ -31,52 +29,40 @@ object AppModule {
             .build()
     }
 
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideFavouritesDao(database: ArticleDatabase) = database.favouritesDao()
 
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideArticleDao(database: ArticleDatabase) = database.articleDao()
 
-    @[Provides Reusable]
-    fun provideNetworkUtils(@ApplicationContext context: Context): NetworkUtils {
-        return NetworkUtils(context)
-    }
 
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideWeatherApi(): WeatherApiInterface {
         return RetrofitBuilder.apiInterFaceBuilder<WeatherApiInterface>(
             baseUrl = RetrofitBuilder.BASE_URL_FROM_WEATHER
         )
     }
 
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideNewsApi(): NewsApiInterface {
         return RetrofitBuilder.apiInterFaceBuilder<NewsApiInterface>(
             baseUrl = RetrofitBuilder.BASE_URL_FROM_NEWS
         )
     }
 
-    @[Provides Reusable]
-    fun provideThemePreferences(@ApplicationContext context: Context): ThemePreferences {
-        return ThemePreferences(context)
-    }
-
-    @[Provides Reusable]
+    @[Provides Singleton]
     fun provideRepository(
         @ApplicationContext context: Context,
         weatherApiInterface: WeatherApiInterface,
         newsApiInterface: NewsApiInterface,
         articleDatabase: ArticleDatabase,
-        networkUtils: NetworkUtils
     ): Repository {
         return RepositoryImpl(
             weatherApiInterface = weatherApiInterface,
             context = context,
             newsApiInterface = newsApiInterface,
-            networkUtils = networkUtils,
             articleDao = articleDatabase.articleDao(),
             favouritesDao = articleDatabase.favouritesDao()
         )
     }
-
 }
