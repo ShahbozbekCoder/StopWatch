@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllNewsScreen(
-    newsScreenViewModel: NewsScreenViewModel = hiltViewModel<NewsScreenViewModel>(),
+    newsScreenViewModel: NewsScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
@@ -48,8 +48,7 @@ fun AllNewsScreen(
     val isRefreshing = newsState is Results.Loading
     val context = LocalContext.current
 
-    val isOnline = NetworkUtils.isNetworkAvailable(context)
-    if (!isOnline) {
+    if (!NetworkUtils.isNetworkAvailable(context)) {
         Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
     }
     val scope = rememberCoroutineScope()
@@ -71,7 +70,10 @@ fun AllNewsScreen(
                     FilterChip(
                         selected = selectedCategory == item,
                         onClick = {
-                            newsScreenViewModel.getNewsData(category = item, isOnline = isOnline)
+                            newsScreenViewModel.getNewsData(
+                                category = item,
+                                isOnline = NetworkUtils.isNetworkAvailable(context)
+                            )
                         },
                         label = {
                             Text(
@@ -93,15 +95,12 @@ fun AllNewsScreen(
             PullToRefreshBox(
                 state = refreshState,
                 onRefresh = {
-                    if (!isOnline) {
+                    if (!NetworkUtils.isNetworkAvailable(context)) {
                         scope.launch {
                             refreshState.snapTo(0f)
                         }
                         Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
-                    } else newsScreenViewModel.getNewsData(
-                        category = selectedCategory,
-                        isOnline = isOnline
-                    )
+                    } else newsScreenViewModel.getNewsData(category = selectedCategory)
                 },
                 isRefreshing = isRefreshing,
                 modifier = Modifier.weight(1f)
@@ -116,6 +115,8 @@ fun AllNewsScreen(
                     is Results.Success -> {
 
                         val data = (newsState as Results.Success).data.articles
+
+                        if (data.isEmpty()) Text(text = "No news available")
 
                         LazyColumn {
                             items(data) { item ->

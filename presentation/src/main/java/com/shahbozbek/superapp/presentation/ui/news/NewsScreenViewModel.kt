@@ -9,7 +9,6 @@ import com.shahbozbek.superapp.domain.usecases.DeleteFavouriteArticleUseCase
 import com.shahbozbek.superapp.domain.usecases.GetFavouriteNewsUseCase
 import com.shahbozbek.superapp.domain.usecases.GetNewsDataUseCase
 import com.shahbozbek.superapp.domain.usecases.InsertFavouriteArticleUseCase
-import com.shahbozbek.superapp.presentation.ui.theme.ThemePreferences
 import com.shahbozbek.superapp.presentation.utils.Constants.categories
 import com.shahbozbek.superapp.presentation.utils.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +25,7 @@ class NewsScreenViewModel @Inject constructor(
     private val getNewsDataUseCase: GetNewsDataUseCase,
     private val getFavouriteNewsUseCase: GetFavouriteNewsUseCase,
     private val insertFavouriteArticleUseCase: InsertFavouriteArticleUseCase,
-    private val deleteFavouriteArticleUseCase: DeleteFavouriteArticleUseCase,
-    private val themePreferences: ThemePreferences
+    private val deleteFavouriteArticleUseCase: DeleteFavouriteArticleUseCase
 ) : ViewModel() {
 
     val listOfCategory: StateFlow<List<String>> = MutableStateFlow(categories)
@@ -43,9 +41,6 @@ class NewsScreenViewModel @Inject constructor(
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _newsData.value = Results.Error(throwable.message ?: "Unknown error")
     }
-
-    private val _isDarkThemeEnabled = MutableStateFlow(themePreferences.isDarkThemeEnabled())
-    val isDarkThemeEnabled: StateFlow<Boolean> get() = _isDarkThemeEnabled.asStateFlow()
 
     init {
         getNewsData()

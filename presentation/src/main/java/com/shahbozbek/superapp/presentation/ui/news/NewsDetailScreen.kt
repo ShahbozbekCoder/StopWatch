@@ -42,11 +42,8 @@ fun NewsDetailScreen(
                 favourite?.let {
 
                     newsDetailScreenViewModel.insertFavouriteArticle(it)
-//                    if (isSaved) {
-//                        Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        Toast.makeText(context, "Already in favourites", Toast.LENGTH_SHORT).show()
-//                    }
+
+                    Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
 
                 } ?: Toast.makeText(context, "No news available", Toast.LENGTH_SHORT).show()
             }) {
