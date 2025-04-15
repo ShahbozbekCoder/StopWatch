@@ -1,7 +1,6 @@
 package com.shahbozbek.superapp.presentation.ui.news
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,8 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.shahbozbek.superapp.presentation.utils.NetworkUtils
 import com.shahbozbek.superapp.presentation.utils.Results
@@ -56,34 +52,6 @@ fun AllNewsScreen(
         Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
     }
     val scope = rememberCoroutineScope()
-
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = object : DefaultLifecycleObserver {
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
-                Log.d("NewsScreen2", "onResume: ")
-            }
-
-            override fun onStart(owner: LifecycleOwner) {
-                super.onStart(owner)
-                Log.d("NewsScreen2", "onStart: ")
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                super.onPause(owner)
-                Log.d("NewsScreen2", "onPause: ")
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-
-    }
 
     Box(
         modifier = Modifier
